@@ -1,30 +1,666 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        NINO CLUBE
-    </title>
-
-     <style>
-        body {
-            background-color: rgb(12, 91, 194);
+    <title>Nino Clube - Locações</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   
+    <style>
+        /* ─── Variáveis de Cores (Inspiradas no Nino Clube) ─── */
+        :root {
+            --cor-fundo-profundo: #161515; /* Cinza quase preto do fundo */
+            --cor-fundo-card: #221F1F;     /* Cinza dos cards e seções alternadas */
+            --cor-azul-logo: #1A8CD8;      /* Azul vibrante principal */
+            --cor-verde-tropical: #1E934C; /* Verde da palmeira */
+            --cor-texto-claro: #FFFFFF;    /* Textos principais */
+            --cor-texto-mutado: #A0A0A0;   /* Textos secundários e descrições */
         }
-        figure {
-            color: rgb(255, 255, 255);
+
+        /* ─── Reset ─── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--cor-fundo-profundo);
+            color: var(--cor-texto-claro);
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        }
+
+        /* ─── Efeito de Imagem de Fundo Transparente ─── */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('link_ou_nome_da_sua_foto.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.08; 
+            z-index: -1;   
+        }
+
+        /* ─── Navbar ─── */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 64px;
+            background-color: rgba(22, 21, 21, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 2px solid var(--cor-azul-logo);
+            backdrop-filter: blur(5px);
+        }
+
+        .navbar a {
+            color: var(--cor-texto-claro);
+            text-decoration: none;
+            margin: 0 24px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .navbar a i {
+            color: var(--cor-azul-logo);
+        }
+
+        .navbar a:hover {
+            color: var(--cor-verde-tropical);
+            transform: translateY(-1px);
+        }
+
+        /* ─── Hero / Vitrine ─── */
+        .hero-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-top: 100px;
+            padding-bottom: 60px;
+            background: linear-gradient(180deg, rgba(26, 140, 216, 0.08) 0%, rgba(22, 21, 21, 0) 100%);
+        }
+
+        .hero-title {
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 800;
+            font-size: 2.8rem;
+            color: var(--cor-texto-claro);
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 60px;
+            text-align: center;
+            letter-spacing: 0.02em;
+            max-width: 600px;
+            color: var(--cor-texto-mutado);
+        }
+
+        /* ─── Vitrine ─── */
+        .vitrine-aluguel {
+            display: flex;
+            gap: 50px;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        /* ─── Card de Itens ─── */
+        .item-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: var(--cor-fundo-card);
+            padding: 24px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--cor-azul-logo);
+        }
+
+        /* Configuração de tamanho e corte perfeito para as fotos */
+        .card-img {
+            width: 240px;
+            height: 240px;
+            border-radius: 16px;
+            object-fit: cover; /* Faz a foto preencher o quadrado sem distorcer ou esticar */
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            background-color: #1d2b36; /* Cor de fundo caso a imagem falhe ao carregar */
+        }
+
+        .item-card .card-label {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--cor-texto-claro);
+        }
+
+        .item-card .card-desc {
+            margin-top: 6px;
+            font-size: 0.85rem;
+            color: var(--cor-texto-mutado);
+        }
+
+        .btn-alugar {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 44px;
+            background-color: var(--cor-azul-logo);
+            color: var(--cor-texto-claro);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border-radius: 50px;
+            transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+        }
+
+        .btn-alugar:hover {
+            background-color: var(--cor-verde-tropical);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(30, 147, 76, 0.4);
+        }
+
+        /* ─── Seções Genéricas ─── */
+        section {
+            padding: 100px 24px;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        section:nth-of-type(even) {
+            background-color: rgba(34, 31, 31, 0.65);
+        }
+
+        section h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--cor-texto-claro);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        section h2 i {
+            font-size: 1.8rem;
+            color: var(--cor-verde-tropical);
+        }
+
+        section p {
+            max-width: 580px;
+            color: var(--cor-texto-mutado);
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        /* ─── Seção de Serviços ─── */
+        .servicos-grid {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 44px;
+            max-width: 860px;
+        }
+
+        .servico-item {
+            background: var(--cor-fundo-profundo);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 32px 24px 28px;
+            width: 190px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        }
+
+        .servico-item:nth-child(odd):hover { border-color: var(--cor-azul-logo); }
+        .servico-item:nth-child(even):hover { border-color: var(--cor-verde-tropical); }
+
+        .servico-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 28px rgba(0,0,0,0.4);
+        }
+
+        .servico-item i {
+            font-size: 2.2rem;
+            color: var(--cor-verde-tropical);
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        .servico-item .s-title {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--cor-texto-claro);
+            margin-bottom: 6px;
+        }
+
+        .servico-item .s-desc {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--cor-texto-mutado);
+            line-height: 1.5;
+        }
+
+        /* ─── Agendamento ─── */
+        .agendamento-card {
+            margin-top: 40px;
+            background: var(--cor-fundo-profundo);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 28px;
+            padding: 40px 36px;
+            width: 100%;
+            max-width: 460px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .cal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .cal-header .cal-month {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--cor-texto-claro);
+        }
+
+        .cal-nav {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            cursor: pointer;
+            color: var(--cor-texto-claro);
+            font-size: 1.2rem;
+            padding: 4px 14px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+
+        .cal-nav:hover { background: var(--cor-azul-logo); }
+
+        .cal-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .cal-weekdays span {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--cor-azul-logo);
+            text-transform: uppercase;
+        }
+
+        .cal-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            text-align: center;
+        }
+
+        .cal-days .day {
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: #DDD;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .cal-days .day:hover { 
+            background: rgba(30, 147, 76, 0.2); 
+            color: #fff;
+        }
+
+        .cal-days .day.today {
+            font-weight: 700;
+            color: var(--cor-verde-tropical);
+            border: 2px solid var(--cor-verde-tropical);
+        }
+
+        .cal-days .day.selected {
+            background: var(--cor-azul-logo);
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .cal-days .day.past {
+            color: #444;
+            cursor: not-allowed;
+        }
+
+        .cal-days .day.past:hover { background: none; }
+        
+        .cal-days .day.empty { cursor: default; }
+        .cal-days .day.empty:hover { background: none; }
+
+        .cal-divider {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 24px 0 20px;
+        }
+
+        /* Formulário de Agendamento */
+        .form-agendamento {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .form-agendamento input,
+        .form-agendamento select {
+            padding: 13px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            color: #fff;
+            background: var(--cor-fundo-card);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-agendamento input:focus,
+        .form-agendamento select:focus {
+            border-color: var(--cor-azul-logo);
+        }
+
+        .form-agendamento option {
+            background: var(--cor-fundo-card);
+        }
+
+        .btn-reserva {
+            margin-top: 6px;
+            padding: 15px;
+            background-color: var(--cor-verde-tropical);
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+        }
+
+        .btn-reserva:hover {
+            background-color: #24b55e;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(30, 147, 76, 0.4);
+        }
+
+        .data-selecionada {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--cor-verde-tropical);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        /* ─── Local ─── */
+        .mapa-placeholder {
+            margin-top: 32px;
+            width: 100%;
+            max-width: 600px;
+            height: 260px;
+            background: var(--cor-fundo-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--cor-texto-mutado);
+            font-size: 0.95rem;
+            gap: 8px;
+        }
+
+        .mapa-placeholder i {
+            color: var(--cor-azul-logo);
+        }
+
+        /* ─── Footer ─── */
+        footer {
+            background: #0F0E0E;
+            color: var(--cor-texto-mutado);
+            text-align: center;
+            padding: 35px 20px;
+            font-size: 0.85rem;
+            letter-spacing: 0.02em;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* ─── Responsivo ─── */
+        @media (max-width: 640px) {
+            .navbar a { margin: 0 10px; font-size: 11px; gap: 4px; }
+            .hero-title { font-size: 2rem; }
+            .vitrine-aluguel { gap: 30px; }
         }
     </style>
 </head>
 <body>
-         
-    <figure>
-        <img src="e:\Pictures\WhatsApp Image 2026-02-05 at 18.21.31.jpeg" alt="NINO CLUBE" 
-        width="80" height="80">
-        <figcaption>NINO CLUBE</figcaption>
-    </figure>
-    
+
+    <nav class="navbar">
+        <a href="#sobre"><i class="fas fa-users"></i> Sobre Nós</a>
+        <a href="#servicos"><i class="fas fa-cogs"></i> Serviços</a>
+        <a href="#agendamento"><i class="fas fa-calendar-alt"></i> Agendamento</a>
+        <a href="#local"><i class="fas fa-map-marker-alt"></i> Local</a>
+    </nav>
+
+    <main class="hero-container">
+        <h1 class="hero-title">O que você deseja alugar?</h1>
+        <p class="hero-subtitle">Escolha uma das opções abaixo e garanta a sua reserva no Nino Clube com total praticidade.</p>
+
+        <div class="vitrine-aluguel">
+
+            <div class="item-card">
+                <img src="sua_foto_chacara.jpg" alt="Chácara Principal" class="card-img">
+                <span class="card-label">Chácara Principal</span>
+                <span class="card-desc">Disponível para locação diária e eventos</span>
+                <a href="#agendamento" class="btn-alugar">Alugar</a>
+            </div>
+
+            <div class="item-card">
+                <img src="sua_foto_lounge.jpg" alt="Espaço Lounge" class="card-img">
+                <span class="card-label">Espaço Lounge</span>
+                <span class="card-desc">Ideal para reuniões e recepções menores</span>
+                <a href="#agendamento" class="btn-alugar">Alugar</a>
+            </div>
+
+        </div>
+    </main>
+
+    <section id="sobre">
+        <h2><i class="fas fa-users"></i> Sobre Nós</h2>
+        <p>No Nino Clube, nosso objetivo é oferecer a melhor estrutura de lazer e espaço para eventos. Unimos o frescor da natureza com o conforto moderno para criar dias verdadeiramente inesquecíveis para você, seus amigos e sua família.</p>
+    </section>
+
+    <section id="servicos">
+        <h2><i class="fas fa-palm-tree"></i> O que o Clube Oferece</h2>
+        <p>Um espaço completo e planejado para o seu total conforto, diversão e descanso.</p>
+        <div class="servicos-grid">
+            <div class="servico-item">
+                <i class="fas fa-music"></i>
+                <span class="s-title">Área de Festa</span>
+                <span class="s-desc">Salão coberto ideal para festas e comemorações importantes</span>
+            </div>
+            <div class="servico-item">
+                <i class="fas fa-swimming-pool"></i>
+                <span class="s-title">Piscina</span>
+                <span class="s-desc">Piscina ampla com área de deck e espreguiçadeiras</span>
+            </div>
+            <div class="servico-item">
+                <i class="fas fa-home"></i>
+                <span class="s-title">Casa Sede</span>
+                <span class="s-desc">Sala espaçosa, cozinha equipada e banheiros privativos</span>
+            </div>
+            <div class="servico-item">
+                <i class="fas fa-umbrella-beach"></i>
+                <span class="s-title">Áreas de Lazer</span>
+                <span class="s-desc">Espaços arborizados ao ar livre para relaxar sob o sol</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="agendamento">
+        <h2><i class="fas fa-calendar-alt"></i> Agendamento</h2>
+        <p>Selecione a data no calendário abaixo, adicione suas informações e envie sua solicitação de reserva.</p>
+
+        <div class="agendamento-card">
+
+            <div class="cal-header">
+                <button class="cal-nav" id="cal-prev">&#8249;</button>
+                <span class="cal-month" id="cal-month-label"></span>
+                <button class="cal-nav" id="cal-next">&#8250;</button>
+            </div>
+            <div class="cal-weekdays">
+                <span>Dom</span><span>Seg</span><span>Ter</span>
+                <span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+            </div>
+            <div class="cal-days" id="cal-days"></div>
+            <p class="data-selecionada" id="data-selecionada"></p>
+
+            <hr class="cal-divider">
+
+            <div class="form-agendamento">
+                <input type="text" id="f-nome" placeholder="Seu nome completo">
+                <input type="tel" id="f-tel" placeholder="Telefone / WhatsApp">
+                <select id="f-item">
+                    <option value="" disabled selected>Selecione o espaço</option>
+                    <option value="Chácara Principal">Chácara Principal</option>
+                    <option value="Espaço Lounge">Espaço Lounge</option>
+                </select>
+                <button class="btn-reserva" type="button" onclick="solicitarReserva()">Solicitar Reserva</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        (function() {
+            const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                            'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+            let current = new Date();
+            let selectedDate = null;
+
+            function render() {
+                const year = current.getFullYear();
+                const month = current.getMonth();
+                document.getElementById('cal-month-label').textContent =
+                    MONTHS[month] + ' ' + year;
+
+                const grid = document.getElementById('cal-days');
+                grid.innerHTML = '';
+
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const today = new Date();
+                today.setHours(0,0,0,0);
+
+                for (let i = 0; i < firstDay; i++) {
+                    const empty = document.createElement('div');
+                    empty.className = 'day empty';
+                    grid.appendChild(empty);
+                }
+
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const date = new Date(year, month, d);
+                    const div = document.createElement('div');
+                    div.className = 'day';
+                    div.textContent = d;
+
+                    if (date < today) {
+                        div.classList.add('past');
+                    } else {
+                        if (date.toDateString() === today.toDateString()) div.classList.add('today');
+                        if (selectedDate && date.toDateString() === selectedDate.toDateString()) div.classList.add('selected');
+                        div.addEventListener('click', () => selectDay(date));
+                    }
+                    grid.appendChild(div);
+                }
+            }
+
+            function selectDay(date) {
+                selectedDate = date;
+                const opts = { weekday:'long', day:'numeric', month:'long', year:'numeric' };
+                document.getElementById('data-selecionada').textContent =
+                    '📅 ' + date.toLocaleDateString('pt-BR', opts);
+                render();
+            }
+
+            document.getElementById('cal-prev').addEventListener('click', () => {
+                current.setMonth(current.getMonth() - 1);
+                render();
+            });
+
+            document.getElementById('cal-next').addEventListener('click', () => {
+                current.setMonth(current.getMonth() + 1);
+                render();
+            });
+
+            render();
+
+            window.solicitarReserva = function() {
+                const nome = document.getElementById('f-nome').value.trim();
+                const tel  = document.getElementById('f-tel').value.trim();
+                const item = document.getElementById('f-item').value;
+                if (!nome || !tel || !item || !selectedDate) {
+                    alert('Por favor, preencha todos os campos e selecione uma data no calendário.');
+                    return;
+                }
+                const dateStr = selectedDate.toLocaleDateString('pt-BR');
+                alert(`✅ Reserva solicitada!\n\nNome: ${nome}\nData: ${dateStr}\nEspaço: ${item}\n\nEntraremos em contato em breve!`);
+            };
+        })();
+    </script>
+
+    <section id="local">
+        <h2><i class="fas fa-map-marker-alt"></i> Localização</h2>
+        <p>Nosso clube fica em uma região de fácil acesso, perfeita para fugir do estresse do dia a dia sem complicações.</p>
+        <div class="mapa-placeholder">
+            <i class="fas fa-map-marked-alt"></i> Mapa interativo em breve
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Nino Clube. Todos os direitos reservados.</p>
+    </footer>
+
 </body>
 </html>
