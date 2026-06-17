@@ -30,8 +30,8 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    /* Removemos o "../" e o "https://...", deixando o caminho direto da raiz */
-    background-image: url('imagens/nino%20capa%20rivieira.jpeg'); 
+    /* Caminho limpo, apontando para o arquivo com hífens */
+    background-image: url('imagens/nino-capa-rivieira.jpeg'); 
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
